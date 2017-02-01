@@ -44,6 +44,34 @@ logic
 #we want
 species_count[which(species_count > 20)]
 
+# Factors: elements of the vector fall under one category, making sure R recognizes
+#the levels of the factor
 
+SiteFactor <- factor(Site, levels = c("A", "B", "C"))     
+SiteFactor
+LocationFactor <- factor(Location, levels = c("Edge", "Interior"))
+LocationFactor
+DurationFactor <- factor(Duration, levels = c("5", "10"))
+DurationFactor
 
+# Create a table #cbind will bind all of the vectors we created to indicate that they're
+#all columns in the new table that we're making
+bird.table2 <- cbind(Point, Site, Location, Duration, species_count)
+bird.table2
+# Turn it into a data fram
+as.data.frame(bird.table2)
+
+write.csv(bird.table2, "bird.table2.Sam.csv")
+
+# Exporting a data frame
+Birds <- data.frame("Point, Site, Location, Duration, species_count")
+write.csv(Birds, "Birds.csv")
+
+#rbind allows you to add rows instead (if you wanted to add another row of data)
+last.row <- c(13, "A", "Edge", "10", 39)
+is.numeric(last.row)
+is.character(last.row)
+
+birds2 <- rbind(bird.table2, last.row)
+birds2
 

@@ -6,3 +6,5 @@
 <h3>Objectives for part 2</h3>
 <ul><li>Basic commands
 <li>Factors, levels, etc. </ul>
+
+
