@@ -1,0 +1,131 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+# Assumptions, tests, transformations 
+
+The assumptions for using any parametric statistical test are the following:
+1. The residuals of the data are normally distributed (or sampled from a population that is normally distributed)
+2. Homogeneity of variance (there is no pattern among the residuals)
+3. Observations are independent 
+
+Examples of parametric tests are: t-test, ANOVA, Pearson's correlation
+
+Let's focus on assumption #1 using some continuous data 
+
+Let's look at a Q-Q plot to verify whether our data is normally distributed. Here, we're looking at whether our data points fit to a straight line. Take a look at the top right graph.
+
+```{r}
+Example <- read.csv('example.csv')
+head(Example)
+
+data(Example)
+Example.Homog <- lm(Example$X ~ Example$Y)
+par(mfrow = c(2,2))
+plot(Example.Homog)
+
+```
+
+Okay, how about we use Shapiro Wilk's Test of Normality to statistically determine whether our data is normally distributed. Remember, a p-value greater than .05 indicates that our data IS normally distributed (a significant p-value of less than .05 would indicate that our data is NOT normally distributed)
+
+```{r}
+
+Example.lm <- lm(Y ~ X, data=Example)
+Example.res <- resid(Example.lm)
+shapiro.test(Example.res)
+
+```
+
+Are our residuals normally distributed?
+
+No? Hmmm, okay. Let's check on that second assumption- homeogeneity of variance.
+
+We'll use the same code that we used first today, but instead look at the residuals vs. fitted plot.
+
+```{r}
+data(Example)
+Example.Homog <- lm(Example$X ~ Example$Y)
+par(mfrow = c(2,2))
+plot(Example.Homog)
+```
+
+No, OK let's try to transform our data. Data transformation is a useful tool to systematically convert all of the observation values in a way that will potentially make a normal distribution or fix the problem with homogeneity of variance. Let's use the 'car' package.
+
+```{r}
+install.packages(car)
+library(car)
+?bcPower
+
+sqr_Y <- bcPower(Example$Y, lambda = .5)
+shapiro.test(sqr_Y)
+```
+
+Did we transform our data to achieve normality? Let's hope so. If not, we could always use non-parametric (slightly less robust) tests that don't require the same assumptions. Examples include: Mann Whitney U test, Kruskall-Wallis test, etc.
+
+Let's segue-way into a new topic!
+
+#Generating Probabilities 
+
+There are 4 functions that are regularly used to work with distributions. They are the density function, the cumulative distribution function, the quantile function, and the random generation function. 
+
+Let's start with the density function of a normal distribution. I can use the "dnorm" function and type in an integer. The function will interpret this statement as: using the normal distribution (bell-shaped curve with mew = 0 and standard deviation = 1), if x = 1 SD, tell me what y equals
+
+```{r}
+dnorm(1)
+```
+
+That's the same as using the following code:
+
+```{r}
+dnorm(1, mean = 0, sd = 1)
+```
+
+But let's say I want to change the parameters or the values of the mean and sd, I can do this!
+
+```{r}
+dnorm(1, mean = 1, sd = 1)
+```
+
+I can also ask for two values of x: 
+
+```{r}
+dnorm(c(1,-1), mean = 1, sd = 1)
+```
+
+Now let's move onto the cumulative density function. The cumulative density function returns the area under the bell shaped curve below a certain value of x:
+
+```{r}
+pnorm(1)
+```
+
+We can also find the area above an x "cut-off" value by subtracting the pnorm value from 1 or by setting "lower.tail=F
+
+```{r}
+1-pnorm(1)
+
+#or 
+
+pnorm(1, lower.tail=F)
+```
+Think of this like your p-value! Pnorm, p-value, get it??
+
+The quantile function is useful in hypothesis testing and inferential statistics. The qnorm function allows us to set quantiles or critical values. We can use the function below to find the upper 95% value
+
+```{r}
+qnorm(.95)
+```
+
+Or we can do a two-tailed test:
+
+```{r}
+qnorm(c(.025, .975))
+```
+
+I can also simulate data, using the random generation function. 
+
+```{r}
+rnorm(10, mean=0,sd=1)
+```
+
+
